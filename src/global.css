@@ -1,5 +1,58 @@
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/preflight.css" layer(base);
-@import "tailwindcss/utilities.css";
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/preflight.css' layer(base);
+@import 'tailwindcss/utilities.css';
 
-@import "nativewind/theme";
+@import 'nativewind/theme';
+
+@theme {
+  /* Primary: civic blue-teal (trust, transit, clarity) */
+  --color-primary-50: #eef7fb;
+  --color-primary-100: #d5ebf4;
+  --color-primary-200: #aed6e8;
+  --color-primary-300: #78b9d6;
+  --color-primary-400: #3e96bd;
+  --color-primary-500: #2078a3;
+  --color-primary-600: #1a6086;
+  --color-primary-700: #194e6c;
+  --color-primary-800: #1b415a;
+  --color-primary-900: #1b374c;
+  --color-primary-950: #0f2332;
+
+  /* Accent: warm sunrise orange (CTAs, badges, highlights) */
+  --color-accent-50: #fff6ed;
+  --color-accent-100: #ffead4;
+  --color-accent-200: #ffd2a8;
+  --color-accent-300: #ffb170;
+  --color-accent-400: #ff8a37;
+  --color-accent-500: #f96d12;
+  --color-accent-600: #ea5208;
+  --color-accent-700: #c23c09;
+  --color-accent-800: #9a310f;
+  --color-accent-900: #7c2b10;
+  --color-accent-950: #431305;
+
+  /* Neutral: warm stone (text, borders, backgrounds) */
+  --color-neutral-50: #f7f7f6;
+  --color-neutral-100: #eeeeec;
+  --color-neutral-200: #dcdcd8;
+  --color-neutral-300: #c1c1bb;
+  --color-neutral-400: #9c9c95;
+  --color-neutral-500: #7d7d76;
+  --color-neutral-600: #64645e;
+  --color-neutral-700: #51514c;
+  --color-neutral-800: #444441;
+  --color-neutral-900: #3b3b39;
+  --color-neutral-950: #232321;
+
+  /* Surfaces */
+  --color-canvas: #fbfaf8;
+  --color-surface: #ffffff;
+
+  /* Semantic */
+  --color-success: #1f8a5b;
+  --color-success-light: #e3f5ec;
+  --color-warning: #b7791f;
+  --color-warning-light: #fdf3dc;
+  --color-danger: #d03a3a;
+  --color-danger-light: #fde8e8;
+}
