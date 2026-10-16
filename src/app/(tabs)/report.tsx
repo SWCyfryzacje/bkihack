@@ -2,10 +2,25 @@ import { Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import ReportForm from '@/components/report-form';
 import { ReportFormData } from '@/types/zod-types';
+import { useState } from 'react';
+import { VOTINGS } from '@/constants/votings';
+import { Voting } from '@/types/type';
 
 export default function Report() {
+  const [votings, setVotings] = useState<Voting[]>(VOTINGS);
+
   const handleSubmit = (data: ReportFormData) => {
-    console.log(data);
+    setVotings((prev) => [
+      ...prev,
+      {
+        id: crypto.randomUUID(),
+        title: data.title,
+        description: data.description,
+        category: data.category,
+        scope: data.scope,
+        isAnonymous: data.isAnonymous,
+      },
+    ]);
   };
 
   return (
