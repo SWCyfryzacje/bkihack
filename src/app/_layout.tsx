@@ -1,5 +1,5 @@
 import { SplashScreen, Stack } from 'expo-router';
-import { StatusBar } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import '@/global.css';
 import { useEffect, useState } from 'react';
 import { useFonts } from 'expo-font';
@@ -25,8 +25,14 @@ export default function RootLayout() {
 
   return (
     <>
-      <StatusBar barStyle='dark-content' />
-      <Stack screenOptions={{ headerShown: false }} />
+      <StatusBar style='dark' />
+
+      <Stack
+        initialRouteName='(tabs)'
+        screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='(auth)' />
+        <Stack.Screen name='(tabs)' />
+      </Stack>
     </>
   );
 }
