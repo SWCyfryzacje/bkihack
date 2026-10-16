@@ -1,17 +1,25 @@
-import { Pressable, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
+import ReportForm from '@/components/report-form';
+import { ReportFormData } from '@/types/zod-types';
 
 export default function Report() {
+  const handleSubmit = (data: ReportFormData) => {
+    console.log(data);
+  };
+
   return (
-    <SafeView className='bg-canvas flex-1 items-center justify-center p-4'>
-      <View className='bg-surface rounded-2xl border border-neutral-200 p-4'>
-        <Text className='font-hd text-center text-4xl font-bold text-neutral-900'>
-          Gooday
+    <SafeView className='bg-canvas flex-1 flex-col gap-6 p-6 pb-0'>
+      <View>
+        <Text className='font-hd text-3xl font-bold text-neutral-900'>
+          Stwórz inicjatywę
         </Text>
-        <Text className='font-cnt text-center text-2xl text-neutral-900'>
-          Gooday
+        <Text className='font-cnt font-bold text-neutral-600'>
+          Dodaj głosowanie na temat, który uważasz za warty uwagi społeczności
         </Text>
       </View>
+
+      <ReportForm onSubmit={handleSubmit} />
     </SafeView>
   );
 }
