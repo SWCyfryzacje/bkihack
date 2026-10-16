@@ -33,6 +33,20 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 76
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Inter_Regular.ttf",
+            "./assets/fonts/Inter_Light.ttf",
+            "./assets/fonts/Inter_Thin.ttf",
+            "./assets/fonts/Inter_Bold.ttf",
+            "./assets/fonts/Jakarta_Regular.ttf",
+            "./assets/fonts/Jakarta_Light.ttf",
+            "./assets/fonts/Jakarta_Bold.ttf"
+          ]
+        }
       ]
     ],
     "experiments": {

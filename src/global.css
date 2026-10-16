@@ -55,4 +55,13 @@
   --color-warning-light: #fdf3dc;
   --color-danger: #d03a3a;
   --color-danger-light: #fde8e8;
+
+  /*  Fonts */
+  --font-cnt: interRegular;
+  --font-cnt-light: interLight;
+  --font-cnt-thin: interThin;
+  --font-cnt-bold: interBold;
+  --font-hd-: jakartaRegular;
+  --font-hd-light: jakartaLight;
+  --font-hd-bold: jakartaBold;
 }
