@@ -1,5 +1,6 @@
 import { Pressable, Text, View } from 'react-native';
 import { router } from 'expo-router';
+import VotingStageBadge from '@/components/voting-stage-badge';
 import { CATEGORIES, SCOPES, type Voting } from '@/types/type';
 
 type Props = {
@@ -25,6 +26,7 @@ export default function HomeVotingListItem({ item }: Props) {
           <Text className='font-cnt text-xs text-neutral-600'>
             {scopeLabel}
           </Text>
+          <VotingStageBadge voting={item} />
         </View>
         <View>
           {item.myVote !== null && (

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import VotingActions from '@/components/voting-actions';
+import VotingStageCard from '@/components/voting-stage-card';
 import {
   castVotingVote,
   fetchVotingById,
@@ -201,12 +202,21 @@ export default function VotingDetailsScreen() {
             </View>
           </View>
 
-          <VotingActions
-            myVote={voting.myVote}
-            pendingVote={pendingVote}
-            error={voteError}
-            onVote={handleVote}
-          />
+          {voting.escalation ? (
+            <VotingStageCard
+              escalation={voting.escalation}
+              status={voting.status}
+            />
+          ) : null}
+
+          {voting.status === 'open' ? (
+            <VotingActions
+              myVote={voting.myVote}
+              pendingVote={pendingVote}
+              error={voteError}
+              onVote={handleVote}
+            />
+          ) : null}
         </ScrollView>
       )}
     </SafeView>

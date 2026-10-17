@@ -38,6 +38,20 @@ export const SCOPES = [
 export type CategoryValue = (typeof CATEGORIES)[number]['value'];
 export type ScopeValue = (typeof SCOPES)[number]['value'];
 export type VotingVoteValue = 1 | -1;
+export type VotingStage = 'osiedle' | 'okreg' | 'miasto';
+export type VotingStatus = 'open' | 'passed' | 'rejected';
+
+// Etap skalowania głosowania "Całe miasto": osiedle -> okręg -> miasto
+export type VotingEscalation = {
+  stage: VotingStage;
+  areaName: string;
+  endsAt: string;
+  threshold: number | null;
+  eligible: number;
+  voters: number;
+  votesFor: number;
+  votesAgainst: number;
+};
 
 export type Voting = {
   id: string;
@@ -49,6 +63,8 @@ export type Voting = {
   votesFor: number;
   votesAgainst: number;
   myVote: VotingVoteValue | null;
+  status: VotingStatus;
+  escalation: VotingEscalation | null;
 };
 
 export type ProcessedErrors = {

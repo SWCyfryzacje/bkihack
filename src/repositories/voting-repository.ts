@@ -2,6 +2,7 @@ import {
   CATEGORIES,
   SCOPES,
   type Voting,
+  type VotingEscalation,
   type VotingVoteValue,
 } from '@/types/type';
 import type { ReportFormData } from '@/types/zod-types';
@@ -12,6 +13,24 @@ type VotingRow = Database['public']['Views']['votings_with_counts']['Row'];
 
 const categoryValues = new Set<string>(CATEGORIES.map(({ value }) => value));
 const scopeValues = new Set<string>(SCOPES.map(({ value }) => value));
+
+function mapEscalation(row: VotingRow): VotingEscalation | null {
+  if (row.stage === null) return null;
+  if (!row.stage_area_name || !row.stage_ends_at) {
+    throw new Error(`Voting ${row.id} contains an incomplete stage.`);
+  }
+
+  return {
+    stage: row.stage,
+    areaName: row.stage_area_name,
+    endsAt: row.stage_ends_at,
+    threshold: row.stage_threshold,
+    eligible: row.stage_eligible ?? 0,
+    voters: row.stage_voters ?? 0,
+    votesFor: row.stage_votes_for ?? 0,
+    votesAgainst: row.stage_votes_against ?? 0,
+  };
+}
 
 function mapVotingRow(row: VotingRow): Voting {
   if (!categoryValues.has(row.category) || !scopeValues.has(row.scope)) {
@@ -41,6 +60,8 @@ function mapVotingRow(row: VotingRow): Voting {
     votesFor: row.votes_for,
     votesAgainst: row.votes_against,
     myVote: row.my_vote,
+    status: row.status,
+    escalation: mapEscalation(row),
   };
 }
 
@@ -48,7 +69,14 @@ function throwOnError(error: { message: string } | null): void {
   if (error) throw new Error(error.message);
 }
 
+// Domyka etapy, którym minął termin (baza nie ma harmonogramu zadań).
+async function advanceVotings(): Promise<void> {
+  const { error } = await supabase.rpc('advance_votings');
+  throwOnError(error);
+}
+
 export async function fetchVotings(): Promise<Voting[]> {
+  await advanceVotings();
   const { data, error } = await supabase
     .from('votings_with_counts')
     .select('*')
@@ -60,6 +88,7 @@ export async function fetchVotings(): Promise<Voting[]> {
 }
 
 export async function fetchVotingById(id: string): Promise<Voting> {
+  await advanceVotings();
   const { data, error } = await supabase
     .from('votings_with_counts')
     .select('*')

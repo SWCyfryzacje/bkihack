@@ -1,4 +1,10 @@
-import type { CategoryValue, ScopeValue, VotingVoteValue } from '@/types/type';
+import type {
+  CategoryValue,
+  ScopeValue,
+  VotingStage,
+  VotingStatus,
+  VotingVoteValue,
+} from '@/types/type';
 
 export type Database = {
   public: {
@@ -41,6 +47,10 @@ export type Database = {
           baseline_votes_for: number;
           baseline_votes_against: number;
           created_at: string;
+          status: VotingStatus;
+          stage: VotingStage | null;
+          stage_area_id: string | null;
+          stage_started_at: string | null;
         };
         Insert: {
           id?: string;
@@ -97,6 +107,15 @@ export type Database = {
           votes_for: number;
           votes_against: number;
           my_vote: VotingVoteValue | null;
+          status: VotingStatus;
+          stage: VotingStage | null;
+          stage_area_name: string | null;
+          stage_ends_at: string | null;
+          stage_threshold: number | null;
+          stage_eligible: number | null;
+          stage_voters: number | null;
+          stage_votes_for: number | null;
+          stage_votes_against: number | null;
         };
         Relationships: [];
       };
@@ -104,6 +123,7 @@ export type Database = {
     Functions: {
       create_mcp_token: { Args: never; Returns: string };
       current_profile_id: { Args: never; Returns: string | null };
+      advance_votings: { Args: never; Returns: undefined };
       cast_voting_vote: {
         Args: { p_voting_id: string; p_value: VotingVoteValue };
         Returns: undefined;

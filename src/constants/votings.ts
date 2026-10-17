@@ -1,6 +1,9 @@
 import type { Voting } from '@/types/type';
 
-type VotingSeed = Omit<Voting, 'votesFor' | 'votesAgainst' | 'myVote'>;
+type VotingSeed = Omit<
+  Voting,
+  'votesFor' | 'votesAgainst' | 'myVote' | 'status' | 'escalation'
+>;
 
 const VOTING_SEEDS: VotingSeed[] = [
   // transport
@@ -254,4 +257,6 @@ export const VOTINGS: Voting[] = VOTING_SEEDS.map((voting) => ({
   votesFor: 0,
   votesAgainst: 0,
   myVote: null,
+  status: 'open',
+  escalation: null,
 }));
