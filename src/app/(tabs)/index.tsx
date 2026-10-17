@@ -2,7 +2,6 @@ import { FlatList, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import HomeVotingListItem from '@/components/home-voting-list-item';
 import VotingListEmptyState from '@/components/voting-list-empty-state';
-import ConnectAiLink from '@/components/connect-ai/connect-ai-link';
 import { useVotings } from '@/hooks/use-votings';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pl';
@@ -30,7 +29,6 @@ export default function Home() {
         </Text>
         <Text className='mt-1 text-lg text-neutral-700'>{time}</Text>
       </View>
-      <ConnectAiLink />
       <View className='flex-1'>
         <FlatList
           ListHeaderComponent={

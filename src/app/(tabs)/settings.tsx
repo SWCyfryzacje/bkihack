@@ -1,4 +1,5 @@
 import SafeView from '@/components/safe-view';
+import ConnectAiLink from '@/components/connect-ai/connect-ai-link';
 import { useAuth, useUser } from '@clerk/expo';
 import { router } from 'expo-router';
 import { Pressable, Text, View } from 'react-native';
@@ -49,6 +50,8 @@ export default function Settings() {
             </Text>
           )}
         </View>
+
+        <ConnectAiLink />
 
         <Pressable
           onPress={handleSignOut}
