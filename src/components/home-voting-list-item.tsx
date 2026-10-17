@@ -15,13 +15,35 @@ export default function HomeVotingListItem({ item }: Props) {
 
   return (
     <View className='bg-surface flex-col gap-4 rounded-2xl border border-neutral-200 p-5'>
-      <View className='flex-row flex-wrap items-center gap-2'>
-        <View className='bg-primary-50 rounded-full px-3 py-1'>
-          <Text className='font-cnt-bold text-primary-700 text-xs'>
-            {categoryLabel}
+      <View className='flex-row flex-wrap items-center justify-between gap-2'>
+        <View className='flex-row flex-wrap items-center gap-2'>
+          <View className='bg-primary-50 rounded-full px-3 py-1'>
+            <Text className='font-cnt-bold text-primary-700 text-xs'>
+              {categoryLabel}
+            </Text>
+          </View>
+          <Text className='font-cnt text-xs text-neutral-600'>
+            {scopeLabel}
           </Text>
         </View>
-        <Text className='font-cnt text-xs text-neutral-600'>{scopeLabel}</Text>
+        <View>
+          {item.myVote !== null && (
+            <View
+              accessibilityLabel={
+                item.myVote === 1 ? 'Twój głos: Za' : 'Twój głos: Przeciw'
+              }
+              className={`rounded-full px-3 py-1 ${
+                item.myVote === 1 ? 'bg-success-light' : 'bg-danger-light'
+              }`}>
+              <Text
+                className={`font-cnt-bold text-xs ${
+                  item.myVote === 1 ? 'text-success' : 'text-danger'
+                }`}>
+                {item.myVote === 1 ? 'Głosujesz: Za' : 'Głosujesz: Przeciw'}
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
       <View className='gap-2'>
         <Text className='font-hd-bold text-left text-xl text-neutral-900'>

@@ -1,4 +1,4 @@
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import HomeVotingListItem from '@/components/home-voting-list-item';
 import VotingListEmptyState from '@/components/voting-list-empty-state';
@@ -43,9 +43,21 @@ export default function Home() {
                 </View>
               </View>
               <View className='gap-1'>
-                <Text className='font-hd-bold text-2xl text-neutral-900'>
-                  Aktualne głosowania
-                </Text>
+                <View className='flex-row items-center justify-between gap-3'>
+                  <Text className='font-hd-bold text-2xl text-neutral-900'>
+                    Aktualne głosowania
+                  </Text>
+                  <Pressable
+                    accessibilityRole='button'
+                    accessibilityLabel='Odśwież głosowania'
+                    disabled={loading}
+                    onPress={retry}
+                    className='rounded-full bg-primary-50 px-3 py-2'>
+                    <Text className='font-cnt-bold text-sm text-primary-700'>
+                      Odśwież
+                    </Text>
+                  </Pressable>
+                </View>
                 <Text className='font-cnt text-base text-neutral-600'>
                   Sprawdź tematy ważne dla mieszkańców.
                 </Text>

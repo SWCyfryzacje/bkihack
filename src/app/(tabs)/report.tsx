@@ -1,4 +1,5 @@
 import { Alert, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import SafeView from '@/components/safe-view';
 import ReportForm from '@/components/report-form';
 import type { ReportFormData } from '@/types/zod-types';
@@ -8,7 +9,7 @@ export default function Report() {
   const handleSubmit = async (data: ReportFormData): Promise<boolean> => {
     try {
       await insertVoting(data);
-      Alert.alert('Inicjatywa opublikowana', 'Dziękujemy za zgłoszenie.');
+      router.replace('/(tabs)');
       return true;
     } catch (error) {
       Alert.alert(
