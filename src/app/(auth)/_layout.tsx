@@ -1,20 +1,19 @@
 import { Redirect, Stack } from 'expo-router';
-// import LoadingScreen from '@/components/loading-screen';
-// import SafeView from '@/components/safe-view';
-// import { Text, View } from 'react-native';
+import { useAuth } from '@clerk/expo';
+import LoadingScreen from '@/components/loading-screen';
 
 export default function RootLayout() {
-  // if (!isLoaded) return <LoadingScreen />;
-  // if (isSignedIn) return <Redirect href='/(tabs)' />;
+  const { isSignedIn, isLoaded } = useAuth();
 
-  return <Redirect href='/(tabs)' />;
+  if (!isLoaded) return <LoadingScreen />;
+  if (isSignedIn) return <Redirect href='/(tabs)' />;
 
-  // return (
-  //   <Stack
-  //     initialRouteName='sign-in'
-  //     screenOptions={{ headerShown: false }}>
-  //     <Stack.Screen name='sign-in' />
-  //     <Stack.Screen name='sign-up' />
-  //   </Stack>
-  // );
+  return (
+    <Stack
+      initialRouteName='sign-in'
+      screenOptions={{ headerShown: false }}>
+      <Stack.Screen name='sign-in' />
+      <Stack.Screen name='sign-up' />
+    </Stack>
+  );
 }

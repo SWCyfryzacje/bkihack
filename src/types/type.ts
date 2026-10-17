@@ -55,3 +55,9 @@ export const SCOPES = [
 export type CategoryValue = (typeof CATEGORIES)[number]['value'];
 export type ScopeValue = (typeof SCOPES)[number]['value'];
 type IconName = ComponentProps<typeof Ionicons>['name'];
+
+export type ProcessedErrors = {
+  email?: string;
+  password?: string;
+  code?: string;
+};
