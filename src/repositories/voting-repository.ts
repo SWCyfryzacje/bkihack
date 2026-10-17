@@ -135,8 +135,10 @@ export async function castVotingVote(
 }
 
 export function subscribeToVotings(onChange: () => void): () => void {
+  // Unikalny temat: supabase.channel() zwraca istniejący kanał o tym samym temacie,
+  // a stary jest usuwany asynchronicznie, więc ponowna subskrypcja rzucałaby błąd przy .on().
   const channel = supabase
-    .channel('public:votings')
+    .channel(`votings:${Math.random()}`)
     .on<Database['public']['Tables']['votings']['Row']>(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'votings' },
