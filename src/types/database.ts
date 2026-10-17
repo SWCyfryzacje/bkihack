@@ -116,6 +116,7 @@ export type Database = {
           stage_voters: number | null;
           stage_votes_for: number | null;
           stage_votes_against: number | null;
+          author_name: string | null;
         };
         Relationships: [];
       };

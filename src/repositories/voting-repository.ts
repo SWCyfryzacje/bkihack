@@ -61,6 +61,8 @@ function mapVotingRow(row: VotingRow): Voting {
     votesAgainst: row.votes_against,
     myVote: row.my_vote,
     areaName: row.stage_area_name,
+    eligibleVoters: row.stage_area_name ? (row.stage_eligible ?? 0) : null,
+    authorName: row.author_name,
     status: row.status,
     escalation: mapEscalation(row),
   };

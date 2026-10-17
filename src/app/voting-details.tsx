@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import VotingActions from '@/components/voting-actions';
+import VotingScopeCard from '@/components/voting-scope-card';
 import VotingStageCard from '@/components/voting-stage-card';
 import {
   castVotingVote,
@@ -180,7 +181,22 @@ export default function VotingDetailsScreen() {
             <Text className='font-cnt text-base leading-6 text-neutral-700'>
               {voting.description}
             </Text>
+            {voting.isAnonymous || voting.authorName ? (
+              <View className='flex-row items-center gap-2'>
+                <Ionicons
+                  name='person-circle-outline'
+                  className='text-xl text-neutral-500'
+                />
+                <Text className='font-cnt text-sm text-neutral-600'>
+                  {voting.isAnonymous
+                    ? 'Utworzone anonimowo'
+                    : `Utworzone przez: ${voting.authorName}`}
+                </Text>
+              </View>
+            ) : null}
           </View>
+
+          <VotingScopeCard voting={voting} />
 
           <View className='gap-3'>
             <Text className='font-hd-bold text-xl text-neutral-900'>

@@ -65,6 +65,10 @@ export type Voting = {
   myVote: VotingVoteValue | null;
   // osiedle "Mojej okolicy" lub obszar bieżącego etapu; null = całe miasto
   areaName: string | null;
+  // mieszkańcy obszaru, którzy mogą głosować; null = bez ograniczeń
+  eligibleVoters: number | null;
+  // null dla głosowań anonimowych
+  authorName: string | null;
   status: VotingStatus;
   escalation: VotingEscalation | null;
 };
