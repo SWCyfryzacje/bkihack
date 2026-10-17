@@ -1,7 +1,7 @@
 import { SplashScreen, Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import '@/global.css';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useFonts } from 'expo-font';
 import { ClerkProvider, useAuth } from '@clerk/expo';
 import LoadingScreen from '@/components/loading-screen';
@@ -45,6 +45,7 @@ function RootLayoutContent() {
         screenOptions={{ headerShown: false }}>
         <Stack.Screen name='(auth)' />
         <Stack.Screen name='(tabs)' />
+        <Stack.Screen name='voting-details' />
       </Stack>
     </>
   );

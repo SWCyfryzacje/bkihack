@@ -20,6 +20,14 @@ export type Voting = {
   isAnonymous: boolean;
 };
 
+export type VotingMechanismValue = 'for_against';
+
+export type VotingDetails = Voting & {
+  votesFor: number;
+  votesAgainst: number;
+  mechanism: VotingMechanismValue;
+};
+
 // `as const` keeps literal types, `satisfies` checks the shape (and icon names!) without widening
 export const CATEGORIES = [
   { value: 'transport', label: 'Transport i drogi', icon: 'bus-outline' },
@@ -50,6 +58,10 @@ export const SCOPES = [
   { value: 'everyday', label: 'Sprawa codzienna' },
   { value: 'local', label: 'Moja okolica' },
   { value: 'citywide', label: 'Całe miasto' },
+] as const satisfies readonly { value: string; label: string }[];
+
+export const VOTING_MECHANISMS = [
+  { value: 'for_against', label: 'Za / przeciw' },
 ] as const satisfies readonly { value: string; label: string }[];
 
 export type CategoryValue = (typeof CATEGORIES)[number]['value'];

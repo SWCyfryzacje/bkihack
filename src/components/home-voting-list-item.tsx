@@ -1,4 +1,5 @@
 import { Pressable, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import { Voting } from '@/types/type';
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
 
 export default function HomeVotingListItem({ item }: Props) {
   return (
-    <Pressable className='flex-col justify-between gap-2 rounded-xl border border-neutral-200 p-4'>
+    <View className='flex-col justify-between gap-2 rounded-xl border border-neutral-200 p-4'>
       <View className='flex-col gap-2'>
         <Text className='font-hd text-center text-lg font-bold text-neutral-900'>
           {item.title}
@@ -17,12 +18,20 @@ export default function HomeVotingListItem({ item }: Props) {
         </Text>
       </View>
       <View className='flex-row'>
-        <Pressable className='bg-accent-500 active:bg-accent-600 w-full rounded-md p-2'>
+        <Pressable
+          onPress={() =>
+            router.push({
+              pathname: '/voting-details',
+              params: { id: item.id },
+            })
+          }
+          accessibilityRole='button'
+          className='bg-accent-500 active:bg-accent-600 w-full rounded-md p-2'>
           <Text className='font-hd text-center text-lg font-bold text-neutral-900'>
             Szczegóły
           </Text>
         </Pressable>
       </View>
-    </Pressable>
+    </View>
   );
 }

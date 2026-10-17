@@ -11,6 +11,9 @@ export type Database = {
           category: CategoryValue;
           scope: ScopeValue;
           is_anonymous: boolean;
+          votes_for: number;
+          votes_against: number;
+          mechanism: 'for_against';
           created_at: string;
         };
         Insert: {
@@ -20,6 +23,9 @@ export type Database = {
           category: CategoryValue;
           scope: ScopeValue;
           is_anonymous: boolean;
+          votes_for?: number;
+          votes_against?: number;
+          mechanism?: 'for_against';
           created_at?: string;
         };
         Update: {
@@ -29,6 +35,9 @@ export type Database = {
           category?: CategoryValue;
           scope?: ScopeValue;
           is_anonymous?: boolean;
+          votes_for?: number;
+          votes_against?: number;
+          mechanism?: 'for_against';
           created_at?: string;
         };
         Relationships: [];

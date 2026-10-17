@@ -1,20 +1,34 @@
 import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
-import { CATEGORIES, SCOPES, type Voting } from '@/types/type';
+import {
+  CATEGORIES,
+  SCOPES,
+  VOTING_MECHANISMS,
+  type VotingDetails,
+} from '@/types/type';
 import type { ReportFormData } from '@/types/zod-types';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
 type VotingRow = Database['public']['Tables']['votings']['Row'];
 export type VotingChange =
-  | { event: 'INSERT' | 'UPDATE'; voting: Voting }
+  | { event: 'INSERT' | 'UPDATE'; voting: VotingDetails }
   | { event: 'DELETE'; id: string };
 
 const categoryValues = new Set<string>(CATEGORIES.map(({ value }) => value));
 const scopeValues = new Set<string>(SCOPES.map(({ value }) => value));
+const mechanismValues = new Set<string>(
+  VOTING_MECHANISMS.map(({ value }) => value)
+);
 
-function mapVotingRow(row: VotingRow): Voting {
-  if (!categoryValues.has(row.category) || !scopeValues.has(row.scope)) {
-    throw new Error(`Voting ${row.id} contains an unsupported category or scope.`);
+function mapVotingRow(row: VotingRow): VotingDetails {
+  if (
+    !categoryValues.has(row.category) ||
+    !scopeValues.has(row.scope) ||
+    !mechanismValues.has(row.mechanism)
+  ) {
+    throw new Error(
+      `Voting ${row.id} contains an unsupported category, scope, or mechanism.`
+    );
   }
 
   return {
@@ -24,6 +38,9 @@ function mapVotingRow(row: VotingRow): Voting {
     category: row.category,
     scope: row.scope,
     isAnonymous: row.is_anonymous,
+    votesFor: row.votes_for,
+    votesAgainst: row.votes_against,
+    mechanism: row.mechanism,
   };
 }
 
@@ -31,7 +48,7 @@ function throwOnError(error: { message: string } | null): void {
   if (error) throw new Error(error.message);
 }
 
-export async function fetchVotings(): Promise<Voting[]> {
+export async function fetchVotings(): Promise<VotingDetails[]> {
   const { data, error } = await supabase
     .from('votings')
     .select('*')
@@ -42,7 +59,21 @@ export async function fetchVotings(): Promise<Voting[]> {
   return data.map(mapVotingRow);
 }
 
-export async function insertVoting(data: ReportFormData): Promise<Voting> {
+export async function fetchVotingById(id: string): Promise<VotingDetails> {
+  const { data, error } = await supabase
+    .from('votings')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  throwOnError(error);
+  if (!data) throw new Error('Nie znaleziono głosowania.');
+  return mapVotingRow(data);
+}
+
+export async function insertVoting(
+  data: ReportFormData
+): Promise<VotingDetails> {
   const { data: row, error } = await supabase
     .from('votings')
     .insert({
@@ -61,7 +92,7 @@ export async function insertVoting(data: ReportFormData): Promise<Voting> {
 }
 
 export function subscribeToVotings(
-  onChange: (change: VotingChange) => void,
+  onChange: (change: VotingChange) => void
 ): () => void {
   const channel = supabase
     .channel('public:votings')
@@ -79,7 +110,7 @@ export function subscribeToVotings(
           event: payload.eventType,
           voting: mapVotingRow(payload.new),
         });
-      },
+      }
     )
     .subscribe();
 
