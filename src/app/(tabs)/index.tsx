@@ -22,31 +22,42 @@ export default function Home() {
   }, []);
 
   return (
-    <SafeView className='bg-canvas flex-1 flex-col gap-4 p-6 pb-0'>
-      <View className='flex-row items-center justify-between border-b border-neutral-200 pb-2'>
-        <Text className='font-hd text-xl text-neutral-900'>
-          Witaj, <Text className='font-bold'>Marcel</Text>
-        </Text>
-        <Text className='mt-1 text-lg text-neutral-700'>{time}</Text>
-      </View>
+    <SafeView className='bg-canvas flex-1 p-4 pb-0'>
       <View className='flex-1'>
         <FlatList
           ListHeaderComponent={
-            <View>
-              <Text className='font-hd text-center text-4xl font-bold text-neutral-900'>
-                Aktualne głosowania
-              </Text>
-              <Text className='font-hd text-center text-lg text-neutral-700'>
-                Głosowania aktywne w twoim regionie
-              </Text>
+            <View className='gap-6'>
+              <View className='bg-primary-700 rounded-3xl p-5'>
+                <View className='bg-accent-400 mb-4 h-1 w-10 rounded-full' />
+                <Text className='font-cnt-bold text-primary-100 text-xs tracking-widest'>
+                  TWOJE MIASTO, TWÓJ GŁOS
+                </Text>
+                <Text className='font-hd-bold mt-2 text-3xl leading-10 text-white'>
+                  Decyduj o swojej okolicy.
+                </Text>
+                <View className='mt-4 flex-row items-center gap-2'>
+                  <View className='bg-accent-400 h-2 w-2 rounded-full' />
+                  <Text className='font-cnt text-primary-100 text-sm'>
+                    {time}
+                  </Text>
+                </View>
+              </View>
+              <View className='gap-1'>
+                <Text className='font-hd-bold text-2xl text-neutral-900'>
+                  Aktualne głosowania
+                </Text>
+                <Text className='font-cnt text-base text-neutral-600'>
+                  Sprawdź tematy ważne dla mieszkańców.
+                </Text>
+              </View>
             </View>
           }
-          ListHeaderComponentStyle={{ marginBottom: 12 }}
+          ListHeaderComponentStyle={{ marginBottom: 16 }}
           ListFooterComponent={<View className='h-4'></View>}
           data={votings}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <HomeVotingListItem item={item} />}
-          ItemSeparatorComponent={<View className='h-4'></View>}
+          ItemSeparatorComponent={<View className='h-3'></View>}
           ListEmptyComponent={
             <VotingListEmptyState
               loading={loading}

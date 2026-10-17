@@ -2,22 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   fetchVotings,
   subscribeToVotings,
-  type VotingChange,
 } from '@/repositories/voting-repository';
 import type { Voting } from '@/types/type';
-
-function applyVotingChange(votings: Voting[], change: VotingChange): Voting[] {
-  if (change.event === 'DELETE') {
-    return votings.filter((voting) => voting.id !== change.id);
-  }
-
-  const index = votings.findIndex((voting) => voting.id === change.voting.id);
-  if (index < 0) return [change.voting, ...votings];
-
-  return votings.map((voting, currentIndex) =>
-    currentIndex === index ? change.voting : voting,
-  );
-}
 
 export function useVotings() {
   const [votings, setVotings] = useState<Voting[]>([]);
@@ -34,35 +20,58 @@ export function useVotings() {
   useEffect(() => {
     let active = true;
     let initialized = false;
-    const pendingChanges: VotingChange[] = [];
+    let refreshPending = false;
+    let refreshRequestId = 0;
 
-    const unsubscribe = subscribeToVotings((change) => {
+    const refresh = async () => {
+      const requestId = ++refreshRequestId;
+      try {
+        const records = await fetchVotings();
+        if (!active || requestId !== refreshRequestId) return;
+        setVotings(records);
+        setError(null);
+      } catch (caught: unknown) {
+        if (!active || requestId !== refreshRequestId) return;
+        setError(
+          caught instanceof Error
+            ? caught.message
+            : 'Nieznany błąd podczas pobierania głosowań.'
+        );
+      }
+    };
+
+    const unsubscribe = subscribeToVotings(() => {
       if (!active) return;
       if (!initialized) {
-        pendingChanges.push(change);
+        refreshPending = true;
         return;
       }
 
-      setVotings((current) => applyVotingChange(current, change));
+      void refresh();
     });
 
     void fetchVotings()
       .then((records) => {
         if (!active) return;
-        setVotings(pendingChanges.reduce(applyVotingChange, records));
-        pendingChanges.length = 0;
+        setVotings(records);
         initialized = true;
+        if (refreshPending) {
+          refreshPending = false;
+          void refresh();
+        }
       })
       .catch((caught: unknown) => {
         if (!active) return;
-        setVotings(pendingChanges.reduce(applyVotingChange, []));
-        pendingChanges.length = 0;
         initialized = true;
         setError(
           caught instanceof Error
             ? caught.message
-            : 'Nieznany błąd podczas pobierania głosowań.',
+            : 'Nieznany błąd podczas pobierania głosowań.'
         );
+        if (refreshPending) {
+          refreshPending = false;
+          void refresh();
+        }
       })
       .finally(() => {
         if (active) setLoading(false);

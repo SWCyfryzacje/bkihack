@@ -2,15 +2,6 @@ import type { ComponentProps } from 'react';
 import type { Ionicons } from '@expo/vector-icons';
 
 type IconName = ComponentProps<typeof Ionicons>['name'];
-type VoteCountField = 'votesFor' | 'votesAgainst';
-type VotingMechanismDefinition = {
-  label: string;
-  outcomes: readonly {
-    label: string;
-    count: VoteCountField;
-    tone: 'success' | 'danger';
-  }[];
-};
 
 // `as const` keeps literal types, `satisfies` checks the shape (and icon names!) without widening
 export const CATEGORIES = [
@@ -44,20 +35,9 @@ export const SCOPES = [
   { value: 'citywide', label: 'Całe miasto' },
 ] as const satisfies readonly { value: string; label: string }[];
 
-export const VOTING_MECHANISMS = [
-  {
-    value: 'for_against',
-    label: 'Za / przeciw',
-    outcomes: [
-      { label: 'Za', count: 'votesFor', tone: 'success' },
-      { label: 'Przeciw', count: 'votesAgainst', tone: 'danger' },
-    ],
-  },
-] as const satisfies readonly (VotingMechanismDefinition & { value: string })[];
-
 export type CategoryValue = (typeof CATEGORIES)[number]['value'];
 export type ScopeValue = (typeof SCOPES)[number]['value'];
-export type VotingMechanismValue = (typeof VOTING_MECHANISMS)[number]['value'];
+export type VotingVoteValue = 1 | -1;
 
 export type Voting = {
   id: string;
@@ -68,7 +48,7 @@ export type Voting = {
   isAnonymous: boolean;
   votesFor: number;
   votesAgainst: number;
-  mechanism: VotingMechanismValue;
+  myVote: VotingVoteValue | null;
 };
 
 export type ProcessedErrors = {

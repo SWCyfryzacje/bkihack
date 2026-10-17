@@ -1,14 +1,20 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { useAuth } from '@clerk/expo';
+import { useEffect, useRef, useState } from 'react';
+import { Alert, Pressable, ScrollView, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
-import { fetchVotingById } from '@/repositories/voting-repository';
+import VotingActions from '@/components/voting-actions';
+import {
+  castVotingVote,
+  fetchVotingById,
+} from '@/repositories/voting-repository';
 import {
   CATEGORIES,
   SCOPES,
-  VOTING_MECHANISMS,
   type Voting,
+  type VotingVoteValue,
 } from '@/types/type';
+import { Ionicons } from '@expo/vector-icons';
 
 const OUTCOME_STYLES = {
   success: {
@@ -21,12 +27,21 @@ const OUTCOME_STYLES = {
   },
 } as const;
 
+const OUTCOMES = [
+  { label: 'Za', count: 'votesFor', tone: 'success' },
+  { label: 'Przeciw', count: 'votesAgainst', tone: 'danger' },
+] as const;
+
 export default function VotingDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const { isSignedIn } = useAuth();
   const [voting, setVoting] = useState<Voting | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
+  const [pendingVote, setPendingVote] = useState<VotingVoteValue | null>(null);
+  const [voteError, setVoteError] = useState<string | null>(null);
+  const votePendingRef = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -63,13 +78,46 @@ export default function VotingDetailsScreen() {
     setRetryKey((current) => current + 1);
   };
 
+  const handleVote = async (value: VotingVoteValue) => {
+    if (!voting || votePendingRef.current || voting.myVote === value) return;
+
+    if (!isSignedIn) {
+      Alert.alert(
+        'Zaloguj się, aby głosować',
+        'Aby oddać głos, zaloguj się na swoje konto.',
+        [
+          { text: 'Anuluj', style: 'cancel' },
+          {
+            text: 'Zaloguj się',
+            onPress: () => router.push('/(auth)/sign-in'),
+          },
+        ]
+      );
+      return;
+    }
+
+    votePendingRef.current = true;
+    setPendingVote(value);
+    setVoteError(null);
+
+    try {
+      setVoting(await castVotingVote(voting.id, value));
+    } catch (caught: unknown) {
+      setVoteError(
+        caught instanceof Error
+          ? caught.message
+          : 'Nie udało się zapisać głosu. Spróbuj ponownie.'
+      );
+    } finally {
+      votePendingRef.current = false;
+      setPendingVote(null);
+    }
+  };
+
   const categoryLabel = CATEGORIES.find(
     ({ value }) => value === voting?.category
   )?.label;
   const scopeLabel = SCOPES.find(({ value }) => value === voting?.scope)?.label;
-  const mechanism = VOTING_MECHANISMS.find(
-    ({ value }) => value === voting?.mechanism
-  );
 
   return (
     <SafeView className='bg-canvas flex-1'>
@@ -79,7 +127,10 @@ export default function VotingDetailsScreen() {
           accessibilityRole='button'
           accessibilityLabel='Wróć'
           className='bg-surface h-10 w-10 items-center justify-center rounded-full border border-neutral-200'>
-          <Text className='font-hd-bold text-primary-600 text-2xl'>←</Text>
+          <Ionicons
+            name='arrow-back'
+            className='text-primary-600 text-4xl'
+          />
         </Pressable>
         <Text className='font-hd-bold text-xl text-neutral-900'>
           Szczegóły głosowania
@@ -132,7 +183,7 @@ export default function VotingDetailsScreen() {
               Głosy mieszkańców
             </Text>
             <View className='flex-row gap-3'>
-              {mechanism?.outcomes.map((outcome) => {
+              {OUTCOMES.map((outcome) => {
                 const styles = OUTCOME_STYLES[outcome.tone];
                 return (
                   <View
@@ -150,14 +201,12 @@ export default function VotingDetailsScreen() {
             </View>
           </View>
 
-          <View className='bg-surface gap-2 rounded-2xl border border-neutral-200 p-5'>
-            <Text className='font-cnt-bold text-sm text-neutral-600'>
-              Mechanizm głosowania
-            </Text>
-            <Text className='font-hd-bold text-primary-700 text-lg'>
-              {mechanism?.label ?? voting.mechanism}
-            </Text>
-          </View>
+          <VotingActions
+            myVote={voting.myVote}
+            pendingVote={pendingVote}
+            error={voteError}
+            onVote={handleVote}
+          />
         </ScrollView>
       )}
     </SafeView>

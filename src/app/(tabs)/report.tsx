@@ -20,13 +20,16 @@ export default function Report() {
   };
 
   return (
-    <SafeView className='bg-canvas flex-1 flex-col gap-6 p-6 pb-0'>
-      <View>
-        <Text className='font-hd text-3xl font-bold text-neutral-900'>
-          Stwórz inicjatywę
+    <SafeView className='bg-canvas flex-1 flex-col gap-5 p-4 pb-0'>
+      <View className='border-primary-100 bg-primary-50 gap-2 rounded-3xl border p-5'>
+        <Text className='font-cnt-bold text-primary-700 text-xs tracking-widest'>
+          ZGŁOSZENIE MIESZKAŃCA
         </Text>
-        <Text className='font-cnt font-bold text-neutral-600'>
-          Dodaj głosowanie na temat, który uważasz za warty uwagi społeczności
+        <Text className='font-hd-bold text-3xl text-neutral-900'>
+          Zgłoś sprawę
+        </Text>
+        <Text className='font-cnt text-base leading-6 text-neutral-700'>
+          Opisz temat, który warto przedstawić lokalnej społeczności.
         </Text>
       </View>
 

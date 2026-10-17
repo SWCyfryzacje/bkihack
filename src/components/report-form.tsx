@@ -166,8 +166,8 @@ export default function ReportForm({
         onPress={handleSubmit(submitForm)}
         disabled={isSubmitting}
         accessibilityRole='button'
-        className='bg-primary-600 active:bg-primary-700 items-center rounded-xl py-4 disabled:opacity-50'>
-        <Text className='font-sans-semibold text-base text-white'>
+        className='bg-accent-500 active:bg-accent-600 items-center rounded-xl py-4 disabled:opacity-50'>
+        <Text className='font-sans-semibold text-base text-neutral-950'>
           {isSubmitting ? 'Publikowanie…' : 'Opublikuj inicjatywę'}
         </Text>
       </Pressable>

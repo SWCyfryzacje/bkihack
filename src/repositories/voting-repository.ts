@@ -1,33 +1,22 @@
-import type { RealtimePostgresChangesPayload } from '@supabase/supabase-js';
 import {
   CATEGORIES,
   SCOPES,
-  VOTING_MECHANISMS,
   type Voting,
+  type VotingVoteValue,
 } from '@/types/type';
 import type { ReportFormData } from '@/types/zod-types';
 import { supabase } from '@/lib/supabase';
 import type { Database } from '@/types/database';
 
-type VotingRow = Database['public']['Tables']['votings']['Row'];
-export type VotingChange =
-  | { event: 'INSERT' | 'UPDATE'; voting: Voting }
-  | { event: 'DELETE'; id: string };
+type VotingRow = Database['public']['Views']['votings_with_counts']['Row'];
 
 const categoryValues = new Set<string>(CATEGORIES.map(({ value }) => value));
 const scopeValues = new Set<string>(SCOPES.map(({ value }) => value));
-const mechanismValues = new Set<string>(
-  VOTING_MECHANISMS.map(({ value }) => value)
-);
 
 function mapVotingRow(row: VotingRow): Voting {
-  if (
-    !categoryValues.has(row.category) ||
-    !scopeValues.has(row.scope) ||
-    !mechanismValues.has(row.mechanism)
-  ) {
+  if (!categoryValues.has(row.category) || !scopeValues.has(row.scope)) {
     throw new Error(
-      `Voting ${row.id} contains an unsupported category, scope, or mechanism.`
+      `Voting ${row.id} contains an unsupported category or scope.`
     );
   }
   if (
@@ -37,6 +26,9 @@ function mapVotingRow(row: VotingRow): Voting {
     row.votes_against < 0
   ) {
     throw new Error(`Voting ${row.id} contains invalid vote totals.`);
+  }
+  if (row.my_vote !== null && row.my_vote !== 1 && row.my_vote !== -1) {
+    throw new Error(`Voting ${row.id} contains an invalid current vote.`);
   }
 
   return {
@@ -48,7 +40,7 @@ function mapVotingRow(row: VotingRow): Voting {
     isAnonymous: row.is_anonymous,
     votesFor: row.votes_for,
     votesAgainst: row.votes_against,
-    mechanism: row.mechanism,
+    myVote: row.my_vote,
   };
 }
 
@@ -58,7 +50,7 @@ function throwOnError(error: { message: string } | null): void {
 
 export async function fetchVotings(): Promise<Voting[]> {
   const { data, error } = await supabase
-    .from('votings')
+    .from('votings_with_counts')
     .select('*')
     .order('created_at', { ascending: false });
 
@@ -69,7 +61,7 @@ export async function fetchVotings(): Promise<Voting[]> {
 
 export async function fetchVotingById(id: string): Promise<Voting> {
   const { data, error } = await supabase
-    .from('votings')
+    .from('votings_with_counts')
     .select('*')
     .eq('id', id)
     .maybeSingle();
@@ -89,34 +81,39 @@ export async function insertVoting(data: ReportFormData): Promise<Voting> {
       scope: data.scope,
       is_anonymous: data.isAnonymous,
     })
-    .select('*')
+    .select('id')
     .single();
 
   throwOnError(error);
   if (!row) throw new Error('Supabase did not return the inserted voting.');
-  return mapVotingRow(row);
+  return fetchVotingById(row.id);
 }
 
-export function subscribeToVotings(
-  onChange: (change: VotingChange) => void
-): () => void {
+export async function castVotingVote(
+  votingId: string,
+  value: VotingVoteValue
+): Promise<Voting> {
+  const { error } = await supabase.rpc('cast_voting_vote', {
+    p_voting_id: votingId,
+    p_value: value,
+  });
+
+  throwOnError(error);
+  return fetchVotingById(votingId);
+}
+
+export function subscribeToVotings(onChange: () => void): () => void {
   const channel = supabase
     .channel('public:votings')
     .on<Database['public']['Tables']['votings']['Row']>(
       'postgres_changes',
       { event: '*', schema: 'public', table: 'votings' },
-      (payload: RealtimePostgresChangesPayload<VotingRow>) => {
-        if (payload.eventType === 'DELETE') {
-          const id = (payload.old as Partial<VotingRow>).id;
-          if (id) onChange({ event: 'DELETE', id });
-          return;
-        }
-
-        onChange({
-          event: payload.eventType,
-          voting: mapVotingRow(payload.new),
-        });
-      }
+      onChange
+    )
+    .on<Database['public']['Tables']['voting_votes']['Row']>(
+      'postgres_changes',
+      { event: '*', schema: 'public', table: 'voting_votes' },
+      onChange
     )
     .subscribe();
 
