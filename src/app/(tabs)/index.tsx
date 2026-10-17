@@ -2,6 +2,7 @@ import { FlatList, Pressable, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import HomeVotingListItem from '@/components/home-voting-list-item';
 import VotingListEmptyState from '@/components/voting-list-empty-state';
+import ConnectAiLink from '@/components/connect-ai/connect-ai-link';
 import { useVotings } from '@/hooks/use-votings';
 import { useAuth } from '@clerk/expo';
 import { router } from 'expo-router';
@@ -46,6 +47,7 @@ export default function Home() {
         </View>
         <Text className='mt-1 text-right text-lg text-neutral-700'>{time}</Text>
       </View>
+      <ConnectAiLink />
       <View className='flex-1'>
         <FlatList
           ListHeaderComponent={
