@@ -15,6 +15,7 @@ export default function RootLayout() {
   //     screenOptions={{ headerShown: false }}>
   //     <Stack.Screen name='sign-in' />
   //     <Stack.Screen name='sign-up' />
+  //     <Stack.Screen name='verify' />
   //   </Stack>
   // );
 }

@@ -8,6 +8,13 @@ export type SignUpInput = {
   areaId: string;
 };
 
+// Konto istnieje, ale e-mail nie został jeszcze potwierdzony kodem.
+export class EmailNotConfirmedError extends Error {
+  constructor() {
+    super('Potwierdź adres e-mail kodem z wiadomości.');
+  }
+}
+
 export async function signUp({
   email,
   password,
@@ -27,11 +34,28 @@ export async function signUp({
   return data;
 }
 
+// szablon "Confirm signup" w Supabase musi wysyłać {{ .Token }}, nie link
+export async function verifySignUpCode(email: string, code: string) {
+  const { data, error } = await supabase.auth.verifyOtp({
+    email,
+    token: code,
+    type: 'signup',
+  });
+  if (error) fail('Nieprawidłowy lub wygasły kod', error);
+  return data;
+}
+
+export async function resendSignUpCode(email: string) {
+  const { error } = await supabase.auth.resend({ type: 'signup', email });
+  if (error) fail('Nie udało się wysłać kodu ponownie', error);
+}
+
 export async function signIn(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
   });
+  if (error?.code === 'email_not_confirmed') throw new EmailNotConfirmedError();
   if (error) fail('Nieprawidłowy e-mail lub hasło', error);
   return data;
 }

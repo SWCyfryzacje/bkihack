@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { router } from 'expo-router';
-import { signIn } from '@/api';
+import { EmailNotConfirmedError, signIn } from '@/api';
 import FormScreen from '@/components/form/form-screen';
 import AuthHeader from '@/components/form/auth-header';
 import AuthLink from '@/components/form/auth-link';
@@ -23,10 +23,19 @@ export default function Login() {
     }
     setLoading(true);
     setError(null);
+    const email = form.email.trim();
     try {
-      await signIn(form.email.trim(), form.password);
+      await signIn(email, form.password);
       router.replace('/(tabs)');
     } catch (e) {
+      // konto bez potwierdzenia — dosyłamy kod i przechodzimy do jego wpisania
+      if (e instanceof EmailNotConfirmedError) {
+        router.push({
+          pathname: '/(auth)/verify',
+          params: { email, resend: '1' },
+        });
+        return;
+      }
       setError(e instanceof Error ? e.message : 'Logowanie nie powiodło się.');
     } finally {
       setLoading(false);

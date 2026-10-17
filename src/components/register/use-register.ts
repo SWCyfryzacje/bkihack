@@ -19,7 +19,6 @@ export function useRegister() {
   const [form, setForm] = useState(EMPTY);
   const [errors, setErrors] = useState<RegisterErrors>({});
   const [submitError, setSubmitError] = useState<string | null>(null);
-  const [info, setInfo] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const set = (field: keyof RegisterForm, value: string) =>
@@ -41,10 +40,7 @@ export function useRegister() {
       });
       // przy włączonym potwierdzaniu e-maila Supabase nie zwraca sesji
       if (session) router.replace('/(tabs)');
-      else
-        setInfo(
-          `Wysłaliśmy link aktywacyjny na ${email}. Potwierdź konto i zaloguj się.`
-        );
+      else router.replace({ pathname: '/(auth)/verify', params: { email } });
     } catch (e) {
       const fallback = 'Rejestracja nie powiodła się.';
       setSubmitError(e instanceof Error ? e.message : fallback);
@@ -53,5 +49,5 @@ export function useRegister() {
     }
   }
 
-  return { form, set, errors, submitError, info, loading, submit };
+  return { form, set, errors, submitError, loading, submit };
 }

@@ -16,10 +16,20 @@ LEVEL_LABELS[proposal.scope]; // 'Osiedle' | 'Okręg' | 'Miasto'
 ## Logowanie
 
 ```ts
-import { signUp, signIn, signOut, useSession } from '@/api';
+import {
+  signUp,
+  verifySignUpCode,
+  resendSignUpCode,
+  signIn,
+  signOut,
+  useSession,
+} from '@/api';
 
 await signUp({ email, password, firstName, lastName, areaId: 'rubinkowo' });
-await signIn(email, password);
+// bez sesji → na maila poszedł kod (ekran /(auth)/verify)
+await verifySignUpCode(email, '123456'); // loguje od razu
+await resendSignUpCode(email);
+await signIn(email, password); // EmailNotConfirmedError, gdy konto bez kodu
 await signOut();
 
 const { session, loading } = useSession(); // session === null → niezalogowany
