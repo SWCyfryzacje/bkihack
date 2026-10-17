@@ -37,6 +37,11 @@ export const SignFormSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters long'),
 });
 
+// Clerk (Password policy) wymaga przy rejestracji min. 15 znaków
+export const SignUpFormSchema = SignFormSchema.extend({
+  password: z.string().min(15, 'Password must be at least 15 characters long'),
+});
+
 export const VerifyCodeSchema = z.object({
   code: z.string().length(6, 'Code must be 6 digits long'),
 });

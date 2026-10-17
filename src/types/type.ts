@@ -55,4 +55,5 @@ export type ProcessedErrors = {
   email?: string;
   password?: string;
   code?: string;
+  global?: string;
 };

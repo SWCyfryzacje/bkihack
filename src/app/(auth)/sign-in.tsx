@@ -18,17 +18,15 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSignIn } from '@clerk/expo';
 import SignVerify from '@/components/sign-verify';
-import { useEffect, useState } from 'react';
 import SignForm from '@/components/sign-form';
-import { ProcessedErrors } from '@/types/type';
+import { processClerkErrors } from '@/utils/clerk-errors';
 
 export default function SignIn() {
   const form = useForm<SignFormData>({ resolver: zodResolver(SignFormSchema) });
 
   const { signIn, errors, fetchStatus } = useSignIn();
 
-  const [processedErrors, setProcessedErrors] =
-    useState<ProcessedErrors | null>(null);
+  const processedErrors = processClerkErrors(errors);
 
   const onSubmit = async (data: SignFormData) => {
     const { error } = await signIn.password({
@@ -85,15 +83,6 @@ export default function SignIn() {
       console.error('Sign-in attempt not complete:', signIn);
     }
   };
-
-  useEffect(() => {
-    Object.entries(errors.fields).forEach(([key, value]) => {
-      setProcessedErrors((prevErrors) => ({
-        ...prevErrors,
-        [key]: value?.message,
-      }));
-    });
-  }, [errors]);
 
   const handleCodeResend = () => signIn.mfa.sendEmailCode();
 

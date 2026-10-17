@@ -12,24 +12,24 @@ import AuthHeader from '@/components/auth-header';
 import { useForm } from 'react-hook-form';
 import {
   SignFormData,
-  SignFormSchema,
+  SignUpFormSchema,
   VerifyCodeData,
 } from '@/types/zod-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth, useSignUp } from '@clerk/expo';
 import SignVerify from '@/components/sign-verify';
-import { useEffect, useState } from 'react';
 import SignForm from '@/components/sign-form';
-import { ProcessedErrors } from '@/types/type';
+import { processClerkErrors } from '@/utils/clerk-errors';
 
 export default function SignUp() {
-  const form = useForm<SignFormData>({ resolver: zodResolver(SignFormSchema) });
+  const form = useForm<SignFormData>({
+    resolver: zodResolver(SignUpFormSchema),
+  });
 
   const { signUp, errors, fetchStatus } = useSignUp();
   const { isSignedIn } = useAuth();
 
-  const [processedErrors, setProcessedErrors] =
-    useState<ProcessedErrors | null>(null);
+  const processedErrors = processClerkErrors(errors);
 
   const onSubmit = async (data: SignFormData) => {
     const { error } = await signUp.password({
@@ -67,15 +67,6 @@ export default function SignUp() {
       console.error('Sign-up attempt not complete:', signUp);
     }
   };
-
-  useEffect(() => {
-    Object.entries(errors.fields).forEach(([key, value]) => {
-      setProcessedErrors((prevErrors) => ({
-        ...prevErrors,
-        [key]: value?.message,
-      }));
-    });
-  }, [errors]);
 
   const handleCodeResend = () => signUp.verifications.sendEmailCode();
 

@@ -76,17 +76,23 @@ export default function SignVerify({
                     />
                   )}
                 />
-                {errors?.email && (
+                {errors?.code && (
                   <Text className='font-cnt text-danger text-xs'>
-                    {errors.email}
+                    {errors.code}
                   </Text>
                 )}
-                {zodErrors.code && !errors?.email && (
+                {zodErrors.code && !errors?.code && (
                   <Text className='font-cnt text-danger text-xs'>
                     {zodErrors.code.message}
                   </Text>
                 )}
               </View>
+
+              {errors?.global && (
+                <Text className='font-cnt text-danger text-xs'>
+                  {errors.global}
+                </Text>
+              )}
 
               <Pressable
                 className={`items-center rounded-xl px-4 py-4 ${code.length < 6 || fetchStatus === 'fetching' ? 'bg-accent-300' : 'bg-accent-500 active:bg-accent-600'}`}
