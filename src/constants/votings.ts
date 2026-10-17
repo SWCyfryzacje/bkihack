@@ -1,6 +1,8 @@
-import { Voting } from '@/types/type';
+import type { Voting } from '@/types/type';
 
-export const VOTINGS: Voting[] = [
+type VotingSeed = Omit<Voting, 'votesFor' | 'votesAgainst' | 'mechanism'>;
+
+const VOTING_SEEDS: VotingSeed[] = [
   // transport
   {
     id: 'v01',
@@ -246,3 +248,10 @@ export const VOTINGS: Voting[] = [
     isAnonymous: false,
   },
 ];
+
+export const VOTINGS: Voting[] = VOTING_SEEDS.map((voting) => ({
+  ...voting,
+  votesFor: 0,
+  votesAgainst: 0,
+  mechanism: 'for_against',
+}));

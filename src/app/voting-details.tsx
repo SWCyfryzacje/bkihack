@@ -7,12 +7,23 @@ import {
   CATEGORIES,
   SCOPES,
   VOTING_MECHANISMS,
-  type VotingDetails,
+  type Voting,
 } from '@/types/type';
+
+const OUTCOME_STYLES = {
+  success: {
+    card: 'border-success/20 bg-success-light',
+    text: 'text-success',
+  },
+  danger: {
+    card: 'border-danger/20 bg-danger-light',
+    text: 'text-danger',
+  },
+} as const;
 
 export default function VotingDetailsScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const [voting, setVoting] = useState<VotingDetails | null>(null);
+  const [voting, setVoting] = useState<Voting | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryKey, setRetryKey] = useState(0);
@@ -56,9 +67,9 @@ export default function VotingDetailsScreen() {
     ({ value }) => value === voting?.category
   )?.label;
   const scopeLabel = SCOPES.find(({ value }) => value === voting?.scope)?.label;
-  const mechanismLabel = VOTING_MECHANISMS.find(
+  const mechanism = VOTING_MECHANISMS.find(
     ({ value }) => value === voting?.mechanism
-  )?.label;
+  );
 
   return (
     <SafeView className='bg-canvas flex-1'>
@@ -121,20 +132,21 @@ export default function VotingDetailsScreen() {
               Głosy mieszkańców
             </Text>
             <View className='flex-row gap-3'>
-              <View className='border-success/20 bg-success-light flex-1 items-center gap-1 rounded-2xl border p-4'>
-                <Text className='font-cnt-bold text-success text-sm'>Za</Text>
-                <Text className='font-hd-bold text-success text-3xl'>
-                  {voting.votesFor}
-                </Text>
-              </View>
-              <View className='border-danger/20 bg-danger-light flex-1 items-center gap-1 rounded-2xl border p-4'>
-                <Text className='font-cnt-bold text-danger text-sm'>
-                  Przeciw
-                </Text>
-                <Text className='font-hd-bold text-danger text-3xl'>
-                  {voting.votesAgainst}
-                </Text>
-              </View>
+              {mechanism?.outcomes.map((outcome) => {
+                const styles = OUTCOME_STYLES[outcome.tone];
+                return (
+                  <View
+                    key={outcome.count}
+                    className={`flex-1 items-center gap-1 rounded-2xl border p-4 ${styles.card}`}>
+                    <Text className={`font-cnt-bold text-sm ${styles.text}`}>
+                      {outcome.label}
+                    </Text>
+                    <Text className={`font-hd-bold text-3xl ${styles.text}`}>
+                      {voting[outcome.count]}
+                    </Text>
+                  </View>
+                );
+              })}
             </View>
           </View>
 
@@ -143,7 +155,7 @@ export default function VotingDetailsScreen() {
               Mechanizm głosowania
             </Text>
             <Text className='font-hd-bold text-primary-700 text-lg'>
-              {mechanismLabel ?? voting.mechanism}
+              {mechanism?.label ?? voting.mechanism}
             </Text>
           </View>
         </ScrollView>

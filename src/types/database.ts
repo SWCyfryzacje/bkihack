@@ -1,4 +1,8 @@
-import type { CategoryValue, ScopeValue } from '@/types/type';
+import type {
+  CategoryValue,
+  ScopeValue,
+  VotingMechanismValue,
+} from '@/types/type';
 
 export type Database = {
   public: {
@@ -13,7 +17,7 @@ export type Database = {
           is_anonymous: boolean;
           votes_for: number;
           votes_against: number;
-          mechanism: 'for_against';
+          mechanism: VotingMechanismValue;
           created_at: string;
         };
         Insert: {
@@ -25,7 +29,7 @@ export type Database = {
           is_anonymous: boolean;
           votes_for?: number;
           votes_against?: number;
-          mechanism?: 'for_against';
+          mechanism?: VotingMechanismValue;
           created_at?: string;
         };
         Update: {
@@ -37,7 +41,7 @@ export type Database = {
           is_anonymous?: boolean;
           votes_for?: number;
           votes_against?: number;
-          mechanism?: 'for_against';
+          mechanism?: VotingMechanismValue;
           created_at?: string;
         };
         Relationships: [];

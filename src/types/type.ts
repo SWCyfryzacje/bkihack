@@ -1,31 +1,15 @@
 import type { ComponentProps } from 'react';
 import type { Ionicons } from '@expo/vector-icons';
 
-export type Voting = {
-  id: string;
-  title: string;
-  description: string;
-  category:
-    | 'transport'
-    | 'greenery'
-    | 'safety'
-    | 'cleanliness'
-    | 'noise'
-    | 'housing'
-    | 'services'
-    | 'culture'
-    | 'community'
-    | 'other';
-  scope: 'everyday' | 'local' | 'citywide';
-  isAnonymous: boolean;
-};
-
-export type VotingMechanismValue = 'for_against';
-
-export type VotingDetails = Voting & {
-  votesFor: number;
-  votesAgainst: number;
-  mechanism: VotingMechanismValue;
+type IconName = ComponentProps<typeof Ionicons>['name'];
+type VoteCountField = 'votesFor' | 'votesAgainst';
+type VotingMechanismDefinition = {
+  label: string;
+  outcomes: readonly {
+    label: string;
+    count: VoteCountField;
+    tone: 'success' | 'danger';
+  }[];
 };
 
 // `as const` keeps literal types, `satisfies` checks the shape (and icon names!) without widening
@@ -61,12 +45,31 @@ export const SCOPES = [
 ] as const satisfies readonly { value: string; label: string }[];
 
 export const VOTING_MECHANISMS = [
-  { value: 'for_against', label: 'Za / przeciw' },
-] as const satisfies readonly { value: string; label: string }[];
+  {
+    value: 'for_against',
+    label: 'Za / przeciw',
+    outcomes: [
+      { label: 'Za', count: 'votesFor', tone: 'success' },
+      { label: 'Przeciw', count: 'votesAgainst', tone: 'danger' },
+    ],
+  },
+] as const satisfies readonly (VotingMechanismDefinition & { value: string })[];
 
 export type CategoryValue = (typeof CATEGORIES)[number]['value'];
 export type ScopeValue = (typeof SCOPES)[number]['value'];
-type IconName = ComponentProps<typeof Ionicons>['name'];
+export type VotingMechanismValue = (typeof VOTING_MECHANISMS)[number]['value'];
+
+export type Voting = {
+  id: string;
+  title: string;
+  description: string;
+  category: CategoryValue;
+  scope: ScopeValue;
+  isAnonymous: boolean;
+  votesFor: number;
+  votesAgainst: number;
+  mechanism: VotingMechanismValue;
+};
 
 export type ProcessedErrors = {
   email?: string;

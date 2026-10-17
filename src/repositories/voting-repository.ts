@@ -3,7 +3,7 @@ import {
   CATEGORIES,
   SCOPES,
   VOTING_MECHANISMS,
-  type VotingDetails,
+  type Voting,
 } from '@/types/type';
 import type { ReportFormData } from '@/types/zod-types';
 import { supabase } from '@/lib/supabase';
@@ -11,7 +11,7 @@ import type { Database } from '@/types/database';
 
 type VotingRow = Database['public']['Tables']['votings']['Row'];
 export type VotingChange =
-  | { event: 'INSERT' | 'UPDATE'; voting: VotingDetails }
+  | { event: 'INSERT' | 'UPDATE'; voting: Voting }
   | { event: 'DELETE'; id: string };
 
 const categoryValues = new Set<string>(CATEGORIES.map(({ value }) => value));
@@ -20,7 +20,7 @@ const mechanismValues = new Set<string>(
   VOTING_MECHANISMS.map(({ value }) => value)
 );
 
-function mapVotingRow(row: VotingRow): VotingDetails {
+function mapVotingRow(row: VotingRow): Voting {
   if (
     !categoryValues.has(row.category) ||
     !scopeValues.has(row.scope) ||
@@ -29,6 +29,14 @@ function mapVotingRow(row: VotingRow): VotingDetails {
     throw new Error(
       `Voting ${row.id} contains an unsupported category, scope, or mechanism.`
     );
+  }
+  if (
+    !Number.isInteger(row.votes_for) ||
+    row.votes_for < 0 ||
+    !Number.isInteger(row.votes_against) ||
+    row.votes_against < 0
+  ) {
+    throw new Error(`Voting ${row.id} contains invalid vote totals.`);
   }
 
   return {
@@ -48,7 +56,7 @@ function throwOnError(error: { message: string } | null): void {
   if (error) throw new Error(error.message);
 }
 
-export async function fetchVotings(): Promise<VotingDetails[]> {
+export async function fetchVotings(): Promise<Voting[]> {
   const { data, error } = await supabase
     .from('votings')
     .select('*')
@@ -59,7 +67,7 @@ export async function fetchVotings(): Promise<VotingDetails[]> {
   return data.map(mapVotingRow);
 }
 
-export async function fetchVotingById(id: string): Promise<VotingDetails> {
+export async function fetchVotingById(id: string): Promise<Voting> {
   const { data, error } = await supabase
     .from('votings')
     .select('*')
@@ -71,9 +79,7 @@ export async function fetchVotingById(id: string): Promise<VotingDetails> {
   return mapVotingRow(data);
 }
 
-export async function insertVoting(
-  data: ReportFormData
-): Promise<VotingDetails> {
+export async function insertVoting(data: ReportFormData): Promise<Voting> {
   const { data: row, error } = await supabase
     .from('votings')
     .insert({
