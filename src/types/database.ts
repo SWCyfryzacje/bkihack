@@ -9,6 +9,17 @@ import type {
 export type Database = {
   public: {
     Tables: {
+      areas: {
+        Row: {
+          id: string;
+          name: string;
+          level: VotingStage;
+          parent_id: string | null;
+        };
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
       profiles: {
         Row: {
           id: string;
