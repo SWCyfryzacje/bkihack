@@ -5,6 +5,7 @@ import {
   type CategoryValue,
   type ScopeValue,
 } from '@/types/type';
+import { PASSWORD_RULES } from '@/constants/password-rules';
 
 // .map() loses the tuple type, so we cast to a non-empty tuple of the *union* (not string)
 const categoryValues = CATEGORIES.map((c) => c.value) as [
@@ -37,9 +38,14 @@ export const SignFormSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters long'),
 });
 
-// Clerk (Password policy) wymaga przy rejestracji min. 15 znaków
+// Przy rejestracji obowiązuje polityka haseł Clerka (lista wymagań pod polem hasła)
 export const SignUpFormSchema = SignFormSchema.extend({
-  password: z.string().min(15, 'Password must be at least 15 characters long'),
+  password: z
+    .string()
+    .refine(
+      (password) => PASSWORD_RULES.every((rule) => rule.test(password)),
+      'Hasło nie spełnia wymagań'
+    ),
 });
 
 export const VerifyCodeSchema = z.object({

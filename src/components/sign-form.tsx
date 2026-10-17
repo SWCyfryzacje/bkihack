@@ -1,8 +1,14 @@
 import { Pressable, Text, TextInput, View } from 'react-native';
-import { Controller, UseFormReturn } from 'react-hook-form';
+import {
+  Controller,
+  UseFormReturn,
+  useFormState,
+  useWatch,
+} from 'react-hook-form';
 import { SignFormData } from '@/types/zod-types';
 import { useState } from 'react';
 import { ProcessedErrors } from '@/types/type';
+import PasswordRequirements from '@/components/password-requirements';
 
 type Props = {
   form: UseFormReturn<SignFormData>;
@@ -22,6 +28,19 @@ export default function SignForm({
   type,
 }: Props) {
   const [showPassword, setShowPassword] = useState(false);
+  const [submittedPassword, setSubmittedPassword] = useState<string>();
+
+  const password = useWatch({ control: form.control, name: 'password' }) ?? '';
+  const { isSubmitted } = useFormState({ control: form.control });
+
+  // błąd z Clerka dotyczy wysłanego hasła — po jego zmianie go chowamy
+  const isPasswordUnchanged = password === submittedPassword;
+  const passwordError = isPasswordUnchanged ? errors?.password : undefined;
+
+  const handleSubmit = () => {
+    setSubmittedPassword(password);
+    onSubmit();
+  };
 
   return (
     <View className='gap-4'>
@@ -90,12 +109,17 @@ export default function SignForm({
             </View>
           )}
         />
-        {errors?.password && (
-          <Text className='font-cnt text-danger text-xs'>
-            {errors.password}
-          </Text>
+        {type === 'sign-up' && (
+          <PasswordRequirements
+            password={password}
+            showErrors={isSubmitted}
+            breached={isPasswordUnchanged && !!errors?.passwordBreached}
+          />
         )}
-        {zodErrors.password && !errors?.password && (
+        {passwordError && (
+          <Text className='font-cnt text-danger text-xs'>{passwordError}</Text>
+        )}
+        {type === 'sign-in' && zodErrors.password && !passwordError && (
           <Text className='font-cnt text-danger text-xs'>
             {zodErrors.password.message}
           </Text>
@@ -108,7 +132,7 @@ export default function SignForm({
 
       <Pressable
         className={`items-center rounded-xl px-4 py-4 ${fetchStatus === 'fetching' ? 'bg-accent-300' : 'bg-accent-500 active:bg-accent-600'}`}
-        onPress={onSubmit}
+        onPress={handleSubmit}
         disabled={fetchStatus === 'fetching'}>
         <Text className='font-cnt-bold text-base text-white'>
           {fetchStatus === 'fetching'

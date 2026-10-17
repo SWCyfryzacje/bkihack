@@ -56,4 +56,5 @@ export type ProcessedErrors = {
   password?: string;
   code?: string;
   global?: string;
+  passwordBreached?: boolean;
 };
