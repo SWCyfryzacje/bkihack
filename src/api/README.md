@@ -80,8 +80,12 @@ useEscalations((e) => toast(`Propozycja awansowała: ${LEVEL_LABELS[e.to_scope]}
 
 ```ts
 const token = await createMcpToken(); // pokaż raz; nowy unieważnia poprzedni
+const url = mcpConnectorUrl(token); // https://mcp.jutropolskie.pl/mcp/<token>
 ```
+
+Gotowy ekran: `src/app/connect-ai.tsx` (trasa `/connect-ai`). Wystarczy podlinkować go np. z panelu:
+`<Link href='/connect-ai'>Połącz z AI</Link>`.
 
 ## Typy bazy
 
-`database.types.ts` jest tymczasowy — zostanie nadpisany przez `supabase gen types typescript`. Nie edytuj go ręcznie.
+`database.types.ts` jest wygenerowany z bazy (Supabase MCP `generate_typescript_types`). Nie edytuj go ręcznie — po zmianie migracji wygeneruj ponownie.
