@@ -13,7 +13,7 @@ export default function Report() {
     } catch (error) {
       Alert.alert(
         'Nie udało się opublikować inicjatywy',
-        error instanceof Error ? error.message : 'Spróbuj ponownie później.',
+        error instanceof Error ? error.message : 'Spróbuj ponownie później.'
       );
       return false;
     }

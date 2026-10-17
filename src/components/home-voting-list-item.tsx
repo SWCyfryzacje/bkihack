@@ -7,17 +7,17 @@ type Props = {
 
 export default function HomeVotingListItem({ item }: Props) {
   return (
-    <Pressable className='flex-col items-center justify-between gap-2 rounded-xl border border-neutral-200 p-4'>
+    <Pressable className='flex-col justify-between gap-2 rounded-xl border border-neutral-200 p-4'>
       <View className='flex-col gap-2'>
-        <Text className='font-hd text-lg font-bold text-neutral-900'>
+        <Text className='font-hd text-center text-lg font-bold text-neutral-900'>
           {item.title}
         </Text>
-        <Text className='font-hd text-sm text-neutral-500'>
+        <Text className='font-hd text-center text-sm text-neutral-500'>
           {item.description}
         </Text>
       </View>
       <View className='flex-row'>
-        <Pressable className='bg-primary-100 w-full rounded-md p-2'>
+        <Pressable className='bg-accent-500 active:bg-accent-600 w-full rounded-md p-2'>
           <Text className='font-hd text-center text-lg font-bold text-neutral-900'>
             Szczegóły
           </Text>

@@ -1,0 +1,3 @@
+When adding any new feature, try to follow the existing style and structure of the codebase. Try to add new files, and make as little changes to existing files as possible, unless it makes sense to do so.
+
+When adding new features or refactoring existing code, try to divide code into smaller components when it makes sense to do so. Do not make files like 500 lines long. Try to evaluate if component has to be larger or smaller, depending on the complexity of the feature and the readability of the code. Also, do not shrink components by force when it is not necessary (when all of it's code makes sense to be in one place).

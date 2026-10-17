@@ -45,7 +45,7 @@ export default function ReportForm({
   return (
     <ScrollView
       className='bg-canvas'
-      contentContainerClassName='gap-6'
+      contentContainerClassName='gap-6 pb-4'
       keyboardShouldPersistTaps='handled'>
       <Controller
         control={control}
@@ -73,7 +73,9 @@ export default function ReportForm({
         control={control}
         name='scope'
         render={({ field: { onChange, value } }) => (
-          <Field label='Zasięg' error={errors.scope?.message}>
+          <Field
+            label='Zasięg'
+            error={errors.scope?.message}>
             <View
               accessibilityRole='radiogroup'
               className='flex-row flex-wrap gap-2'>

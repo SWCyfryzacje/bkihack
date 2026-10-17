@@ -1,4 +1,4 @@
-import { Redirect, Tabs } from 'expo-router';
+import { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 // import LoadingScreen from '@/components/loading-screen';
 import TabBarIcon from '@/components/tab-bar-icon';
@@ -13,17 +13,17 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#4f46e5',
-        tabBarInactiveTintColor: '#94a3b8',
+        tabBarActiveTintColor: '#1a6086',
+        tabBarInactiveTintColor: '#7d7d76',
         tabBarStyle: {
           backgroundColor: '#ffffff',
-          borderTopColor: '#f1f5f9',
+          borderTopColor: '#dcdcd8',
           borderTopWidth: 1,
           height: 60 + Math.max(insets.bottom, 8),
           paddingBottom: Math.max(insets.bottom, 8),
           paddingTop: 6,
           elevation: 10,
-          shadowColor: '#0f172a',
+          shadowColor: '#232321',
           shadowOffset: { width: 0, height: -3 },
           shadowOpacity: 0.04,
           shadowRadius: 6,
@@ -40,7 +40,7 @@ export default function TabsLayout() {
           title: 'Panel',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? 'home' : 'home-outline'}
+              name='home-outline'
               color={color}
               focused={focused}
             />
@@ -53,7 +53,20 @@ export default function TabsLayout() {
           title: 'Zgłoszenie',
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon
-              name={focused ? 'megaphone-outline' : 'megaphone-outline'}
+              name='megaphone-outline'
+              color={color}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name='settings'
+        options={{
+          title: 'Ustawienia',
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon
+              name='settings-outline'
               color={color}
               focused={focused}
             />
