@@ -60,6 +60,7 @@ function mapVotingRow(row: VotingRow): Voting {
     votesFor: row.votes_for,
     votesAgainst: row.votes_against,
     myVote: row.my_vote,
+    areaName: row.stage_area_name,
     status: row.status,
     escalation: mapEscalation(row),
   };

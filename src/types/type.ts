@@ -63,6 +63,8 @@ export type Voting = {
   votesFor: number;
   votesAgainst: number;
   myVote: VotingVoteValue | null;
+  // osiedle "Mojej okolicy" lub obszar bieżącego etapu; null = całe miasto
+  areaName: string | null;
   status: VotingStatus;
   escalation: VotingEscalation | null;
 };

@@ -2,7 +2,7 @@ import type { Voting } from '@/types/type';
 
 type VotingSeed = Omit<
   Voting,
-  'votesFor' | 'votesAgainst' | 'myVote' | 'status' | 'escalation'
+  'votesFor' | 'votesAgainst' | 'myVote' | 'areaName' | 'status' | 'escalation'
 >;
 
 const VOTING_SEEDS: VotingSeed[] = [
@@ -257,6 +257,7 @@ export const VOTINGS: Voting[] = VOTING_SEEDS.map((voting) => ({
   votesFor: 0,
   votesAgainst: 0,
   myVote: null,
+  areaName: null,
   status: 'open',
   escalation: null,
 }));

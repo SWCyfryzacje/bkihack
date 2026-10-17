@@ -24,7 +24,9 @@ export default function HomeVotingListItem({ item }: Props) {
             </Text>
           </View>
           <Text className='font-cnt text-xs text-neutral-600'>
-            {scopeLabel}
+            {item.areaName && !item.escalation
+              ? `${scopeLabel} · ${item.areaName}`
+              : scopeLabel}
           </Text>
           <VotingStageBadge voting={item} />
         </View>

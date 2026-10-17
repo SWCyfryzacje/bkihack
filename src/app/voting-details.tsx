@@ -169,6 +169,9 @@ export default function VotingDetailsScreen() {
               </Text>
               <Text className='font-cnt-bold rounded-full bg-neutral-100 px-3 py-1 text-xs text-neutral-700'>
                 {scopeLabel ?? voting.scope}
+                {voting.areaName && !voting.escalation
+                  ? ` · ${voting.areaName}`
+                  : ''}
               </Text>
             </View>
             <Text className='font-hd-bold text-2xl text-neutral-900'>
