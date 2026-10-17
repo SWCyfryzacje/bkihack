@@ -2,8 +2,8 @@ import { Text, View } from 'react-native';
 
 const STEPS = [
   'Wygeneruj adres poniżej i skopiuj go.',
-  'Claude: Ustawienia → Connectors → Add custom connector. ChatGPT: Ustawienia → Connectors (tryb deweloperski).',
-  'Wklej adres jako URL serwera, uwierzytelnianie: brak (No sign in).',
+  'Claude: Ustawienia → Connectors → Add custom connector → wklej adres jako URL serwera. Uwierzytelnianie: brak (No sign in).',
+  'ChatGPT (z komputera): w lewym pasku kliknij trzy kropki (Więcej) → Wtyczki → Dodaj (prawy górny róg) → Dodaj niestandardowy serwer MCP → wklej adres, jako nazwę wpisz „Wotum”. Uwierzytelnianie: brak.',
   'Napisz w czacie np. „Na moim osiedlu brakuje przejścia dla pieszych”.',
 ];
 
