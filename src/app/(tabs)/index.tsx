@@ -1,19 +1,26 @@
 import { FlatList, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
-import { VOTINGS } from '@/constants/votings';
 import HomeVotingListItem from '@/components/home-voting-list-item';
+import VotingListEmptyState from '@/components/voting-list-empty-state';
+import { useVotings } from '@/hooks/use-votings';
 import dayjs from 'dayjs';
 import 'dayjs/locale/pl';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 dayjs.locale('pl');
 
 export default function Home() {
   const [time, setTime] = useState(dayjs().format('dddd, DD MMMM YYYY, HH:mm'));
+  const { votings, loading, error, retry } = useVotings();
 
-  setInterval(() => {
-    setTime((prev) => dayjs().format('dddd, DD MMMM YYYY, HH:mm'));
-  }, 60000);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTime(dayjs().format('dddd, DD MMMM YYYY, HH:mm'));
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
+
 
   return (
     <SafeView className='bg-canvas flex-1 flex-col gap-2 p-6 pb-0'>
@@ -37,10 +44,13 @@ export default function Home() {
           }
           ListHeaderComponentStyle={{ marginBottom: 12 }}
           ListFooterComponent={<View className='h-4'></View>}
-          data={VOTINGS}
+          data={votings}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <HomeVotingListItem item={item} />}
           ItemSeparatorComponent={<View className='h-4'></View>}
+          ListEmptyComponent={
+            <VotingListEmptyState loading={loading} error={error} onRetry={retry} />
+          }
         />
       </View>
     </SafeView>

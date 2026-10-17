@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { FormFeatures } from '@/constants/form-features';
+import { FormFeatures, SCOPES } from '@/constants/form-features';
 import { ReportFormData, ReportFormSchema } from '@/types/zod-types';
 import Field from '@/components/report-form-field';
 import Chip from '@/components/report-form-chip';
@@ -16,11 +16,12 @@ import Chip from '@/components/report-form-chip';
 export default function ReportForm({
   onSubmit,
 }: {
-  onSubmit: (values: ReportFormData) => Promise<void> | void;
+  onSubmit: (values: ReportFormData) => Promise<boolean> | boolean;
 }) {
   const {
     control,
     handleSubmit,
+    reset,
     watch,
     formState: { errors, isSubmitting },
   } = useForm<ReportFormData>({
@@ -33,6 +34,10 @@ export default function ReportForm({
   });
 
   const descriptionLength = watch('description')?.length ?? 0;
+
+  const submitForm = async (values: ReportFormData) => {
+    if (await onSubmit(values)) reset();
+  };
 
   const inputBase =
     'rounded-xl border bg-surface pl-4 pr-4 font-sans text-base text-neutral-900';
@@ -60,6 +65,27 @@ export default function ReportForm({
               returnKeyType='next'
               className={`${inputBase} ${errors.title ? 'border-danger' : 'border-neutral-200'}`}
             />
+          </Field>
+        )}
+      />
+
+      <Controller
+        control={control}
+        name='scope'
+        render={({ field: { onChange, value } }) => (
+          <Field label='Zasięg' error={errors.scope?.message}>
+            <View
+              accessibilityRole='radiogroup'
+              className='flex-row flex-wrap gap-2'>
+              {SCOPES.map((scope) => (
+                <Chip
+                  key={scope.value}
+                  label={scope.label}
+                  selected={value === scope.value}
+                  onPress={() => onChange(scope.value)}
+                />
+              ))}
+            </View>
           </Field>
         )}
       />
@@ -135,7 +161,7 @@ export default function ReportForm({
       />
 
       <Pressable
-        onPress={handleSubmit(onSubmit)}
+        onPress={handleSubmit(submitForm)}
         disabled={isSubmitting}
         accessibilityRole='button'
         className='bg-primary-600 active:bg-primary-700 items-center rounded-xl py-4 disabled:opacity-50'>

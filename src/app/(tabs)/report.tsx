@@ -1,26 +1,22 @@
-import { Text, View } from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import SafeView from '@/components/safe-view';
 import ReportForm from '@/components/report-form';
-import { ReportFormData } from '@/types/zod-types';
-import { useState } from 'react';
-import { VOTINGS } from '@/constants/votings';
-import { Voting } from '@/types/type';
+import type { ReportFormData } from '@/types/zod-types';
+import { insertVoting } from '@/repositories/voting-repository';
 
 export default function Report() {
-  const [votings, setVotings] = useState<Voting[]>(VOTINGS);
-
-  const handleSubmit = (data: ReportFormData) => {
-    setVotings((prev) => [
-      ...prev,
-      {
-        id: crypto.randomUUID(),
-        title: data.title,
-        description: data.description,
-        category: data.category,
-        scope: data.scope,
-        isAnonymous: data.isAnonymous,
-      },
-    ]);
+  const handleSubmit = async (data: ReportFormData): Promise<boolean> => {
+    try {
+      await insertVoting(data);
+      Alert.alert('Inicjatywa opublikowana', 'Dziękujemy za zgłoszenie.');
+      return true;
+    } catch (error) {
+      Alert.alert(
+        'Nie udało się opublikować inicjatywy',
+        error instanceof Error ? error.message : 'Spróbuj ponownie później.',
+      );
+      return false;
+    }
   };
 
   return (
