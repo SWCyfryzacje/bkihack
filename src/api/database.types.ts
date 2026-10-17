@@ -264,6 +264,36 @@ export type Database = {
           },
         ];
       };
+      votings: {
+        Row: {
+          category: Database['public']['Enums']['voting_category'];
+          created_at: string;
+          description: string;
+          id: string;
+          is_anonymous: boolean;
+          scope: Database['public']['Enums']['voting_scope'];
+          title: string;
+        };
+        Insert: {
+          category: Database['public']['Enums']['voting_category'];
+          created_at?: string;
+          description: string;
+          id?: string;
+          is_anonymous?: boolean;
+          scope: Database['public']['Enums']['voting_scope'];
+          title: string;
+        };
+        Update: {
+          category?: Database['public']['Enums']['voting_category'];
+          created_at?: string;
+          description?: string;
+          id?: string;
+          is_anonymous?: boolean;
+          scope?: Database['public']['Enums']['voting_scope'];
+          title?: string;
+        };
+        Relationships: [];
+      };
     };
     Views: {
       proposals_with_counts: {
@@ -325,6 +355,18 @@ export type Database = {
       proposal_category: 'general' | 'city_task' | 'legislative';
       proposal_source: 'app' | 'mcp';
       proposal_status: 'open' | 'escalated' | 'closed';
+      voting_category:
+        | 'transport'
+        | 'greenery'
+        | 'safety'
+        | 'cleanliness'
+        | 'noise'
+        | 'housing'
+        | 'services'
+        | 'culture'
+        | 'community'
+        | 'other';
+      voting_scope: 'everyday' | 'local' | 'citywide';
     };
     CompositeTypes: {
       [_ in never]: never;
@@ -456,6 +498,19 @@ export const Constants = {
       proposal_category: ['general', 'city_task', 'legislative'],
       proposal_source: ['app', 'mcp'],
       proposal_status: ['open', 'escalated', 'closed'],
+      voting_category: [
+        'transport',
+        'greenery',
+        'safety',
+        'cleanliness',
+        'noise',
+        'housing',
+        'services',
+        'culture',
+        'community',
+        'other',
+      ],
+      voting_scope: ['everyday', 'local', 'citywide'],
     },
   },
 } as const;
