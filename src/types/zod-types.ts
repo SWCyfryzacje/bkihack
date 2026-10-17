@@ -37,9 +37,24 @@ export const SignFormSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters long'),
 });
 
+export const OnboardingSchema = z.object({
+  firstName: z
+    .string()
+    .trim()
+    .min(1, 'Podaj imię')
+    .max(100, 'Imię jest za długie'),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, 'Podaj nazwisko')
+    .max(100, 'Nazwisko jest za długie'),
+  areaId: z.string().min(1, 'Wybierz swoje osiedle'),
+});
+
 export const VerifyCodeSchema = z.object({
   code: z.string().length(6, 'Code must be 6 digits long'),
 });
 
 export type SignFormData = z.infer<typeof SignFormSchema>;
+export type OnboardingFormData = z.infer<typeof OnboardingSchema>;
 export type VerifyCodeData = z.infer<typeof VerifyCodeSchema>;

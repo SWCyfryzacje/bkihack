@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native';
-import { Href, Link, Redirect, router } from 'expo-router';
+import { Href, Link, router } from 'expo-router';
 import SafeView from '@/components/safe-view';
 import AuthHeader from '@/components/auth-header';
 import { useForm } from 'react-hook-form';
@@ -16,7 +16,7 @@ import {
   VerifyCodeData,
 } from '@/types/zod-types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth, useSignUp } from '@clerk/expo';
+import { useSignUp } from '@clerk/expo';
 import SignVerify from '@/components/sign-verify';
 import { useEffect, useState } from 'react';
 import SignForm from '@/components/sign-form';
@@ -26,7 +26,6 @@ export default function SignUp() {
   const form = useForm<SignFormData>({ resolver: zodResolver(SignFormSchema) });
 
   const { signUp, errors, fetchStatus } = useSignUp();
-  const { isSignedIn } = useAuth();
 
   const [processedErrors, setProcessedErrors] =
     useState<ProcessedErrors | null>(null);
@@ -59,7 +58,7 @@ export default function SignUp() {
             return;
           }
 
-          const url = decorateUrl('/(tabs)');
+          const url = decorateUrl('/(auth)/onboarding');
           router.replace(url as Href);
         },
       });
@@ -78,10 +77,6 @@ export default function SignUp() {
   }, [errors]);
 
   const handleCodeResend = () => signUp.verifications.sendEmailCode();
-
-  if (signUp.status === 'complete' || isSignedIn) {
-    return <Redirect href='/(tabs)' />;
-  }
 
   if (
     signUp.status === 'missing_requirements' &&

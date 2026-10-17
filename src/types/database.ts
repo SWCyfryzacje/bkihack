@@ -3,6 +3,33 @@ import type { CategoryValue, ScopeValue, VotingVoteValue } from '@/types/type';
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          id: string;
+          clerk_id: string | null;
+          first_name: string;
+          last_name: string;
+          area_id: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          clerk_id?: string | null;
+          first_name?: string;
+          last_name?: string;
+          area_id?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          clerk_id?: string | null;
+          first_name?: string;
+          last_name?: string;
+          area_id?: string | null;
+          created_at?: string;
+        };
+        Relationships: [];
+      };
       votings: {
         Row: {
           id: string;
@@ -79,6 +106,10 @@ export type Database = {
       current_profile_id: { Args: never; Returns: string | null };
       cast_voting_vote: {
         Args: { p_voting_id: string; p_value: VotingVoteValue };
+        Returns: undefined;
+      };
+      complete_onboarding: {
+        Args: { p_first_name: string; p_last_name: string; p_area_id: string };
         Returns: undefined;
       };
     };
